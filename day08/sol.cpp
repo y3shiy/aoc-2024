@@ -25,23 +25,19 @@ auto is_on_map(Position p) {
 		&& (0 <= p.col && p.col < g_map.front().size());
 }
 
+void propogate_wave(Position pos, int32_t dr, int32_t dc) {
+	while (is_on_map(pos)) {
+		g_map.at(pos.row).at(pos.col) = '#';
+		pos.row += dr;
+		pos.col += dc;
+	}
+}
+
 void put_antinodes(Position p1, Position p2) {
 	auto dr = p2.row - p1.row;
 	auto dc = p2.col - p1.col;
-	auto node1 = Position{
-		.row = p2.row + dr,
-		.col = p2.col + dc
-	};
-	if (is_on_map(node1)) {
-		g_map.at(node1.row).at(node1.col) = '#';
-	}
-	auto node2 = Position{
-		.row = p1.row - dr,
-		.col = p1.col - dc
-	};
-	if (is_on_map(node2)) {
-		g_map.at(node2.row).at(node2.col) = '#';
-	}
+	propogate_wave(p2, dr, dc);
+	propogate_wave(p1, -dr, -dc);
 }
 
 int main() {
